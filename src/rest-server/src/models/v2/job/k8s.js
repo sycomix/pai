@@ -428,6 +428,10 @@ const generateTaskRole = (frameworkName, taskRole, labels, config, storageConfig
                   mountPath: '/usr/local/pai',
                 },
                 {
+                  name: 'data',
+                  mountPath: '/mnt/data',
+                },
+                {
                   name: 'host-log',
                   subPath: `${labels.userName}/${labels.jobName}/${convertName(taskRole)}`,
                   mountPath: '/usr/local/pai/logs',
@@ -451,6 +455,12 @@ const generateTaskRole = (frameworkName, taskRole, labels, config, storageConfig
             {
               name: 'pai-vol',
               emptyDir: {},
+            },
+            {
+              name: 'data',
+              hostPath: {
+                path: '/mnt/data/data',
+              },
             },
             {
               name: 'host-log',
