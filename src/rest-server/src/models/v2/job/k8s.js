@@ -432,6 +432,10 @@ const generateTaskRole = (frameworkName, taskRole, labels, config, storageConfig
                   mountPath: '/mnt/data',
                 },
                 {
+                  name: 'azure-data',
+                  mountPath: '/mnt/azure',
+                },
+                {
                   name: 'host-log',
                   subPath: `${labels.userName}/${labels.jobName}/${convertName(taskRole)}`,
                   mountPath: '/usr/local/pai/logs',
@@ -460,6 +464,12 @@ const generateTaskRole = (frameworkName, taskRole, labels, config, storageConfig
               name: 'data',
               hostPath: {
                 path: '/mnt/data/data',
+              },
+            },
+            {
+              name: 'azure-data',
+              hostPath: {
+                path: '/mnt/data/azure',
               },
             },
             {
