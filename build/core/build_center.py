@@ -132,7 +132,7 @@ class BuildCenter:
             for item in services:
                 if item in self.process_list:
                     for inedge in self.graph.services[item].inedges:
-                        print(os.path.join(self.codeDir, inedge), os.path.join(self.graph.services[item].path, self.dependencyDir + inedge))
+                        print('copy', os.path.join(self.codeDir, inedge), os.path.join(self.graph.services[item].path, self.dependencyDir + inedge))
                         build_worker.copy_dependency_folder(os.path.join(self.codeDir,inedge),
                         os.path.join(self.graph.services[item].path,self.dependencyDir+inedge))
                     build_worker.build_single_component(self.graph.services[item])
@@ -147,7 +147,6 @@ class BuildCenter:
             # Clean generated folder
             self.logger.info("Begin to clean all temp folder")
             for item in services:
-                print('rm', self.graph.services[item].path)
                 build_worker.clean_temp_folder(self.graph.services[item].path)
             self.logger.info("Clean all temp folder succeed")
 
