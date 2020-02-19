@@ -1,6 +1,6 @@
 # name, os, packages(space-gapped), precommands
 # "#" can be used for comments
-ssh,ubuntu16.04,openssh-server,
+ssh,ubuntu16.04,openssh-client openssh-server,
 # ssh,ubuntu18.04,openssh-server,
 # nfs,ubuntu16.04,nfs-common,
 # nfs,ubuntu18.04,nfs-common,

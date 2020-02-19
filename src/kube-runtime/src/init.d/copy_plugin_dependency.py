@@ -37,7 +37,7 @@ def main():
     parser.add_argument("target_folder", help="dependency target folder")
     args = parser.parse_args()
 
-    if os.exists(args.target_folder) is False:
+    if os.path.exists(args.target_folder) is False:
         os.makedirs(args.target_folder)
 
     LOGGER.info("get job config from %s", args.job_config)
