@@ -23,10 +23,8 @@ if [ -d "../dependency" ]; then
     rm -rf "../dependency"
 fi
 
+mkdir -p "../dependency/package_cache"
 ROOT_DIR=$(cd "../dependency/package_cache"; pwd)
-mkdir -p $ROOT_DIR
-echo 'xxxxxxxxxx' $ROOT_DIR
-sleep 100s
 
 if [ "$ENABLE_PACKAGE_CACHE" == "true" ]; then
   if hash sudo 2>/dev/null; then
