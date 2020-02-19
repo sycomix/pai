@@ -51,15 +51,21 @@ do
         mkdir -p $package_dir
         echo $packages > $package_dir"/packages"
         echo $precommands > $package_dir"/precommands.sh"
+        # use docker to fetch all packages, and save them to $ROOT_DIR
         docker run -i -v $package_dir:/mount $base_image \
           /bin/bash  << EOF_DOCKER
+                     /bin/bash /mount/precommands.sh || exit 1
                      apt-get update
-                     apt-get -y install --print-uris \`cat /mount/packages\` | cut -d " " -f 1-2 | grep http:// > /aptinfo && \
+                     cd /mount && \
+                     apt-get -y install --print-uris \`cat ./packages\` | cut -d " " -f 1-2 | grep http:// > /aptinfo && \
                      cat /aptinfo | cut -d\' -f 2 > /apturl && \
+                     apt-get -y install openssh-server curl &> /install_log && \
+                     cat /install_log  | grep Setting | cut -d " " -f 3 > ./order && \
                      apt-get -y install wget && \
-                     wget -i /apturl --tries 3 -P /mount && \
-                     cat /aptinfo | cut -d " " -f 2 > /mount/order
+                     wget -i /apturl --tries 3 -P ./ && \
+                     ls -la *.deb | awk '{print $9}' | while read filename; do mv $filename \`echo $filename | cut -d "_" -f1\`".deb"; done;
 EOF_DOCKER
+        rm -rf $package_dir"/packages" $package_dir"/precommands.sh"
       else
         echo "Only os=ubuntu16.04 or os=ubuntu18.04 is supported! Found: $os"
         exit 1
