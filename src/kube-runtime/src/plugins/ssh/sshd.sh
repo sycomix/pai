@@ -104,8 +104,11 @@ function start_ssh()
 
 # Try to install openssh if sshd is not found
 if [ ! -f /usr/sbin/sshd ] ; then
-  apt-get update
-  apt-get install -y openssh-client openssh-server
+  /bin/bash ${PAI_WORK_DIR}/runtime.d/install_dependency.sh ssh
+  if [ $? -ne 0 ]; then
+    apt-get update
+    apt-get install -y openssh-client openssh-server
+  fi
 fi
 
 
