@@ -43,7 +43,7 @@ if cat /etc/issue | grep "Ubuntu 16.04" &> /dev/null ; then
 elif cat /etc/issue | grep "Ubuntu 18.04" &> /dev/null ; then
   os='ubuntu18.04'
 else
-  echo "This os doesn't support dependency cache!"
+  echo "[package_cache] This os doesn't support package cache!"
   exit 1
 fi
 if [ -d $CACHE_ROOT_DIR"/${name}-${os}" ]; then
@@ -51,18 +51,18 @@ if [ -d $CACHE_ROOT_DIR"/${name}-${os}" ]; then
   packages=`cat ${package_dir}"/packages"`
   ubuntu_is_successfully_installed "${packages}"
   if [ $? -eq 0 ]; then
-    echo "Skip installation of dependency ${name}."
+    echo "[package_cache] Skip installation of dependency ${name}."
     exit 0
   fi
-  echo "Install dependency ${name} from cache ${package_dir}."
-  cat ${package_dir}"/order" | while read file; do echo "install $file ..."; dpkg -i $file".deb"; done;
+  echo "[package_cache] Install dependency ${name} from cache ${package_dir}."
+  cat ${package_dir}"/order" | while read file; do dpkg -i ${package_dir}"/"$file".deb"; done;
   apt-get install -f
   # check if packages are installed
   ubuntu_is_successfully_installed "${packages}"
   if [ $? -eq 0 ]; then
-    echo "Install dependency ${name} from cache ${package_dir} successfully!"
+    echo "[package_cache] Install dependency ${name} from cache ${package_dir} successfully!"
   else
-    echo "Cache installation failed. Fall back to apt-get."
+    echo "[package_cache] Installation failed from cache. Fall back to apt-get."
     /bin/bash ${package_dir}"/precommands.sh"
     apt-get update
     apt-get install -y ${packages}
