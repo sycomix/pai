@@ -23,8 +23,8 @@ if [ -d "../dependency" ]; then
     rm -rf "../dependency"
 fi
 
-mkdir -p "../dependency/package-cache"
-ROOT_DIR=$(cd "../dependency/package-cache"; pwd)
+mkdir -p "../dependency/package_cache"
+ROOT_DIR=$(cd "../dependency/package_cache"; pwd)
 
 if hash sudo 2>/dev/null; then
   # if sudo exists, use `sudo docker` instead of `docker`.
@@ -74,6 +74,6 @@ EOF_DOCKER
         exit 1
       fi
     fi
-done < "package-cache-info"
+done < "package_cache_info"
 
 popd > /dev/null
