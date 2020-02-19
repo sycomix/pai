@@ -49,9 +49,9 @@ def main():
     if 'extras' in job_config and 'com.microsoft.pai.runtimeplugin' in job_config['extras']:
         plugins = job_config['extras']['com.microsoft.pai.runtimeplugin']
         for plugin in plugins:
-            if plugin['name'] == 'ssh':
+            if plugin['plugin'] == 'ssh':
                 need_names.extend([name for name in dependency_names if name.startswith('ssh-')])
-            elif plugin['name'] == 'teamwise_storage':
+            elif plugin['plugin'] == 'teamwise_storage':
                 need_names.extend([name for name in dependency_names if name.startswith('nfs-')])
                 need_names.extend([name for name in dependency_names if name.startswith('samba-')])
                 need_names.extend([name for name in dependency_names if name.startswith('azurefile-')])
@@ -62,6 +62,7 @@ def main():
         name_target_folder = os.path.join(args.target_folder, name)
         LOGGER.info('add dependency from %s to %s', name_source_folder, name_target_folder)
         shutil.copytree(name_source_folder, name_target_folder)
+
 
 if __name__ == "__main__":
     utils.init_logger()
