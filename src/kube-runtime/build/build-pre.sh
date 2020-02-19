@@ -27,12 +27,12 @@ mkdir -p "../dependency"
 
 for line in `cat package-cache-info`
 do
-    start_char=`echo line | cut -b 1`
+    start_char=`echo $line | cut -b 1`
     if [ ! "$start_char" = "#" ]; then
-      name=`echo line | cut -d , -f 1`
-      os=`echo line | cut -d , -f 2`
-      packages=`echo line | cut -d , -f 3`
-      precommands=`echo line | cut -d , -f 4`
+      name=`echo $line | cut -d , -f 1`
+      os=`echo $line | cut -d , -f 2`
+      packages=`echo $line | cut -d , -f 3`
+      precommands=`echo $line | cut -d , -f 4`
       echo "name: ${name} os: ${os} packages: ${packages}"
     fi    
 done
