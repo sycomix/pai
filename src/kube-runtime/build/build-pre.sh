@@ -40,30 +40,29 @@ do
       packages=`echo $line | cut -d , -f 3`
       precommands=`echo $line | cut -d , -f 4`
       echo "name: ${name} os: ${os} packages: ${packages}"
-    fi
-    if [ "$os" == "ubuntu16.04" -o "$os" == "ubuntu18.04" ]; then
-      if [ "$os" == "ubuntu16.04" ]; then
-        base_image="ubuntu:16.04"
-      fi
-      if [ "$os" == "ubuntu18.04" ]; then
-        base_image="ubuntu:18.04"
-      fi
-      package_dir=$ROOT_DIR"/${name}-${os}"
-      mkdir -p $package_dir
-      docker run -i -v $package_dir:/mount $base_image -e PACKAGES=${packages} \
-        /bin/bash  << EOF_DOCKER
-                   apt-get update
-                   apt-get -y install --print-uris $PACKAGES | cut -d " " -f 1-2 | grep http:// > /aptinfo && \
-                   cat /aptinfo | cut -d\' -f 2 > /apturl && \
-                   apt-get -y install wget && \
-                   wget -i /apturl --tries 3 -P /mount && \
-                   cat /aptinfo | cut -d " " -f 2 > /mount/order
+      if [ "$os" == "ubuntu16.04" -o "$os" == "ubuntu18.04" ]; then
+        if [ "$os" == "ubuntu16.04" ]; then
+          base_image="ubuntu:16.04"
+        fi
+        if [ "$os" == "ubuntu18.04" ]; then
+          base_image="ubuntu:18.04"
+        fi
+        package_dir=$ROOT_DIR"/${name}-${os}"
+        mkdir -p $package_dir
+        docker run -i -v $package_dir:/mount $base_image -e PACKAGES=${packages} \
+          /bin/bash  << EOF_DOCKER
+                     apt-get update
+                     apt-get -y install --print-uris $PACKAGES | cut -d " " -f 1-2 | grep http:// > /aptinfo && \
+                     cat /aptinfo | cut -d\' -f 2 > /apturl && \
+                     apt-get -y install wget && \
+                     wget -i /apturl --tries 3 -P /mount && \
+                     cat /aptinfo | cut -d " " -f 2 > /mount/order
 EOF_DOCKER
-    else
-      echo "Only os=ubuntu16.04 or os=ubuntu18.04 is supported! Found: $os"
-      exit 1
+      else
+        echo "Only os=ubuntu16.04 or os=ubuntu18.04 is supported! Found: $os"
+        exit 1
+      fi
     fi
-
 done < "package-cache-info"
 
 echo "hello" > "../dependency/x"
