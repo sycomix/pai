@@ -21,45 +21,51 @@ PAI_WORK_DIR=/usr/local/pai
 CACHE_ROOT_DIR=${PAI_WORK_DIR}/package_cache
 
 ubuntu_is_successfully_installed(){
-    for package in $1
-    do
-      dpkg -l $package &> /dev/null
-      if [ $? -ne 0 ]; then
-        return 1
-      fi
-    done
-    return 0
+  for package in $1
+  do
+    dpkg -l $package &> /dev/null
+    if [ $? -ne 0 ]; then
+      return 1
+    fi
+  done
+  return 0
 }
 
 if [ $# -ne 1 ]; then
-    echo "Usage: bash -x install_dependency.sh <dependency_name>"
-    name=$1
-    exit 1
+  echo "Usage: bash -x install_dependency.sh <dependency_name>"
+  exit 1
 else
-  if cat /etc/issue | grep "Ubuntu 16.04" &> /dev/null ; then
-    os='ubuntu16.04'
-  elif cat /etc/issue | grep "Ubuntu 18.04" &> /dev/null ; then
-    os='ubuntu18.04'
-  else
-    echo "This os doesn't support dependency cache!"
-    exit 1
+  name=$1
+fi
+
+if cat /etc/issue | grep "Ubuntu 16.04" &> /dev/null ; then
+  os='ubuntu16.04'
+elif cat /etc/issue | grep "Ubuntu 18.04" &> /dev/null ; then
+  os='ubuntu18.04'
+else
+  echo "This os doesn't support dependency cache!"
+  exit 1
+fi
+if [ -d $CACHE_ROOT_DIR"/${name}-${os}" ]; then
+  package_dir=$CACHE_ROOT_DIR"/${name}-${os}"
+  packages=`cat ${package_dir}"/packages"`
+  ubuntu_is_successfully_installed "${packages}"
+  if [ $? -eq 0 ]; then
+    echo "Skip installation of dependency ${name}."
+    exit 0
   fi
-  if [ -d $CACHE_ROOT_DIR"/${name}-${os}" ]; then
-    package_dir=$CACHE_ROOT_DIR"/${name}-${os}"
-    packages=`cat ${package_dir}"/packages"`
-    echo "Install dependency ${name} from cache ${package_dir}."
-    cat ${package_dir}"/order" | while read file; do echo "install $file ..."; dpkg -i $file".deb"; done;
-    apt-get install -f
-    # check if packages are installed
-    ubuntu_is_successfully_installed "${packages}"
-    if [ $? -ne 0 ]; then
-      echo "Cache installation failed. Fall back to apt-get."
-      /bin/bash ${package_dir}"/precommands.sh"
-      apt-get update
-      apt-get install -y ${packages}
-    fi
-  else
-    echo "Cannot find dependency ${name}-${os}!"
-    exit 1
+  echo "Install dependency ${name} from cache ${package_dir}."
+  cat ${package_dir}"/order" | while read file; do echo "install $file ..."; dpkg -i $file".deb"; done;
+  apt-get install -f
+  # check if packages are installed
+  ubuntu_is_successfully_installed "${packages}"
+  if [ $? -ne 0 ]; then
+    echo "Cache installation failed. Fall back to apt-get."
+    /bin/bash ${package_dir}"/precommands.sh"
+    apt-get update
+    apt-get install -y ${packages}
   fi
+else
+  echo "Cannot find dependency ${name}-${os}!"
+  exit 1
 fi
