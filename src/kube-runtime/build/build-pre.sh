@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Copyright (c) Microsoft Corporation
 # All rights reserved.
 #
@@ -15,35 +17,14 @@
 # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+pushd $(dirname "$0") > /dev/null
 
-FROM golang:1.12.6-alpine as builder
+if [ -d "../dependency" ]; then
+	rm -rf "../dependency"
+fi
 
-ENV PROJECT_DIR=${GOPATH}/src/github.com/microsoft/runtime
-ENV INSTALL_DIR=/opt/kube-runtime
+mkdir -p "../dependency"
 
-RUN apk update && apk add --no-cache bash && \
-  mkdir -p ${PROJECT_DIR} ${INSTALL_DIR}
-COPY GOPATH/src/github.com/microsoft/runtime/ ${PROJECT_DIR}
-RUN ${PROJECT_DIR}/build/runtime/go-build.sh && \
-  mv ${PROJECT_DIR}/dist/runtime/ ${INSTALL_DIR}
+echo "hello" > "../dependency/x"
 
-FROM python:3.7-alpine
-
-RUN pip install kubernetes pyyaml requests jinja2 pystache
-
-ENV INSTALL_DIR=/opt/kube-runtime
-ARG BARRIER_DIR=/opt/frameworkcontroller/frameworkbarrier
-
-WORKDIR /kube-runtime/src
-
-COPY dependency/x ./
-
-COPY src/ ./
-COPY --from=frameworkcontroller/frameworkbarrier:v0.6.0 $BARRIER_DIR/frameworkbarrier ./init.d
-COPY --from=builder ${INSTALL_DIR}/* ./runtime.d
-RUN chmod -R +x ./
-
-# This line should be removed after using k8s client to interact with api server
-RUN apk update && apk add --no-cache curl
-
-CMD ["/bin/sh", "-c", "set -o pipefail && LOG_DIR=/usr/local/pai/logs/${FC_POD_UID} && mkdir -p ${LOG_DIR} && /kube-runtime/src/init 2>&1 | tee -a ${LOG_DIR}/init.log"]
+popd > /dev/null
