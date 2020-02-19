@@ -60,9 +60,9 @@ if [ -d $CACHE_ROOT_DIR"/${name}-${os}" ]; then
   # check if packages are installed
   ubuntu_is_successfully_installed "${packages}"
   if [ $? -eq 0 ]; then
-    echo "[package_cache] Install dependency ${name} from cache ${package_dir} successfully!"
+    echo "[package_cache] Install dependency ${name} from cache ${package_dir} succeeded!"
   else
-    echo "[package_cache] Installation failed from cache. Fall back to apt-get."
+    echo "[package_cache] Install dependency ${name} from cache ${package_dir} failed. Fallback to apt-get."
     /bin/bash ${package_dir}"/precommands.sh"
     apt-get update
     apt-get install -y ${packages}
