@@ -49,10 +49,12 @@ do
         fi
         package_dir=$ROOT_DIR"/${name}-${os}"
         mkdir -p $package_dir
-        docker run -i -v $package_dir:/mount $base_image -e PACKAGES=${packages} \
+        echo $packages > $package_dir"/packages"
+        echo $precommands > $package_dir"/precommands.sh"
+        docker run -i -v $package_dir:/mount $base_image \
           /bin/bash  << EOF_DOCKER
                      apt-get update
-                     apt-get -y install --print-uris $PACKAGES | cut -d " " -f 1-2 | grep http:// > /aptinfo && \
+                     apt-get -y install --print-uris \`cat /mount/packages\` | cut -d " " -f 1-2 | grep http:// > /aptinfo && \
                      cat /aptinfo | cut -d\' -f 2 > /apturl && \
                      apt-get -y install wget && \
                      wget -i /apturl --tries 3 -P /mount && \
