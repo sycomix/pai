@@ -25,7 +25,7 @@ fi
 
 mkdir -p "../dependency"
 
-while IFS= read -r line;
+while IFS= read -r line || [[ -n "$line" ]] ;
 do
     start_char=`echo $line | cut -b 1`
     if [ ! "$start_char" = "#" ]; then
