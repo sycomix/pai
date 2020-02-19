@@ -65,14 +65,15 @@ do
                      wget -i /apturl --tries 3 -P ./ && \
                      ls -la *.deb | awk '{print \$9}' | while read filename; do mv \$filename \`echo \$filename | cut -d "_" -f1\`".deb"; done;
 EOF_DOCKER
-        rm -rf $package_dir"/packages" $package_dir"/precommands.sh"
+        if [ $? -ne 0 ]; then
+          echo 'There is an error during package collection.'
+          exit 1
+        fi
       else
         echo "Only os=ubuntu16.04 or os=ubuntu18.04 is supported! Found: $os"
         exit 1
       fi
     fi
 done < "package-cache-info"
-
-echo "hello" > "../dependency/x"
 
 popd > /dev/null
