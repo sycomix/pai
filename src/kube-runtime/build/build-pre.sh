@@ -63,8 +63,7 @@ do
                      cat /install_log  | grep Setting | cut -d " " -f 3 | cut -d ":" -f 1 > ./order && \
                      apt-get -y install wget && \
                      wget -i /apturl --tries 3 -P ./ && \
-                     sleep 20m && \
-                     ls -la *.deb | awk '{print \$9}' | while read filename; do echo \$filename; mv \$filename \`echo $filename | cut -d "_" -f1\`".deb"; done;
+                     ls -la *.deb | awk '{print \$9}' | while read filename; do echo \$filename; mv \$filename \`echo \$filename | cut -d "_" -f1\`".deb"; done;
 EOF_DOCKER
         rm -rf $package_dir"/packages" $package_dir"/precommands.sh"
       else
