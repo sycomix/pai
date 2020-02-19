@@ -34,9 +34,9 @@ RUN pip install kubernetes pyyaml requests jinja2 pystache
 ENV INSTALL_DIR=/opt/kube-runtime
 ARG BARRIER_DIR=/opt/frameworkcontroller/frameworkbarrier
 
-WORKDIR /kube-runtime/src
+COPY dependency/package_cache /opt/package_cache
 
-COPY dependency/x ./
+WORKDIR /kube-runtime/src
 
 COPY src/ ./
 COPY --from=frameworkcontroller/frameworkbarrier:v0.6.0 $BARRIER_DIR/frameworkbarrier ./init.d
