@@ -78,9 +78,9 @@ class BuildHandler:
         temp_generated_dir = os.path.join(service_path, self.generatedDir)
         temp_dependency_dir = os.path.join(service_path, self.dependencyDir)
 
-        if os.path.isdir(temp_generated_dir):
-            shutil.rmtree(temp_generated_dir)
+        # if os.path.isdir(temp_generated_dir):
+        #     shutil.rmtree(temp_generated_dir)
 
-        if os.path.isdir(temp_dependency_dir):
-            shutil.rmtree(temp_dependency_dir)
+        # if os.path.isdir(temp_dependency_dir):
+        #     shutil.rmtree(temp_dependency_dir)
 
